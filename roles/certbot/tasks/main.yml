@@ -1,0 +1,18 @@
+  - name: Adicionando o repositório do certbot
+    apt_repository:
+      filename: 'certbot'
+      repo: "ppa:certbot/certbot"
+      state: present
+      update_cache: yes
+    tags: certbot
+
+  - name: Instalando o certbot
+    apt:
+      name: "python-certbot-nginx"
+      install_recommends: yes 
+      state: present
+    tags: certbot
+
+  - name: Obtendo o certificado
+    shell: "certbot --nginx -d {{ certbot_commits }}"
+    tags: certbot

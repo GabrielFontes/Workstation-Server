@@ -1,0 +1,62 @@
+---
+- name: Recebendo pacote
+  get_url:
+    dest: /tmp/
+    url: 'https://cdn.zabbix.com/zabbix/sources/stable/{{ zabbix_version }}/zabbix-{{ zabbix_version_full }}.tar.gz'
+  tags: zabbix
+
+- name: Descompactando
+  unarchive:
+    src: /tmp/zabbix-{{ zabbix_version_full }}.tar.gz 
+    remote_src: yes 
+    dest: /usr/local/src
+  tags: zabbix
+
+- name: Instalando o compilador e os requisitos para configurar
+  apt:
+    name: '{{ zabbix_requisitos }}'
+    install_recommends: yes
+    state: present
+    force_apt_get: yes
+  tags: zabbix
+  
+- name: Criando grupo
+  group:
+    name: zabbix
+    state: present
+  tags: zabbix
+
+- name: Criando o usuário
+  user:
+    name: zabbix
+    group: zabbix 
+    create_home: yes 
+    skeleton: /home 
+  tags: zabbix
+
+- name: Configurando 
+  shell: "./configure {{ zabbix_configure }}" 
+  args:
+    chdir: /usr/local/src/zabbix-{{ zabbix_version_full }}/
+  tags: zabbix
+
+- name: Make install
+  shell: "make install"
+  args:
+    chdir: /usr/local/src/zabbix-{{ zabbix_version_full }}/ 
+  tags: make
+
+- name: Instala o agente e o server
+  apt:
+    name: '{{ zabbix_scripts }}'
+    state: latest
+  tags: Scripts
+
+#- name: Script de inicialização
+#  copy:
+#    src: /lib/systemd/system/zabbix-agent.service
+#    dest: /lib/systemd/system/zabbix-agent.service
+#  tags: zabbix3.4
+#
+#- name: Iniciando
+#  shell: "systemctl start zabbix-agent.service"

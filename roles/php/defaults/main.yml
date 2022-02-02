@@ -1,0 +1,28 @@
+php_version: '7.4.1'
+php_short_version: '7.4' 
+php_dependencias:
+  - build-essential
+  - nano
+  - net-tools
+  - autoconf
+  - libfcgi-dev
+  - libfcgi0ldbl
+  - libjpeg-turbo8-dev
+  - libsystemd-dev
+  - libmcrypt-dev
+  - libssl-dev
+  - libc-client2007e
+  - libc-client2007e-dev
+  - libxml2-dev
+  - libbz2-dev
+  - libcurl4-openssl-dev
+  - libjpeg-dev
+  - libpng-dev
+  - libfreetype6-dev
+  - libkrb5-dev
+  - libpq-dev
+  - libxml2-dev
+  - libxslt1-dev
+  - libzip-dev
+  - libsqlite3-dev 
+  - libonig-dev

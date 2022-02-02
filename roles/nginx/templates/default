@@ -1,0 +1,22 @@
+server {
+        listen 80;
+        listen [::]:80;
+
+        root /var/www/html;
+        #root /home/{{ item.dominio }};
+
+        index index.php index.html index.htm index.nginx-debian.html;
+
+        server_name {{ item.dominio }};
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+
+        location ~ \.php$ {
+               include snippets/fastcgi-php.conf;
+               # With {{ item.version }}:
+               fastcgi_pass unix:/run/php/{{ item.version }}.sock;
+        }
+
+}

@@ -1,0 +1,12 @@
+  create_user: yes
+  borg_user: 
+  - { user: 'joao.com', name_backup: 'joao.com-backup', compression: 'lz4', nivel: '6', path: '/home/testando/teste.txt'} 
+  - { user: 'maria.com', name_backup: 'maria.com-backup', compression: 'lz4', nivel: '6', path: '/home/testando/*'} 
+
+# Compression:
+#   lz4 (super fast, low compression)
+#   zstd (wide range from high speed and low compression to high compression and lower speed)
+#   zlib (medium speed and compression)
+#   lzma (low speed, high compression)
+
+# Nível 0 a 9

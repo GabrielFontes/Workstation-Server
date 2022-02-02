@@ -1,0 +1,40 @@
+---
+- name: Adiciona a chave do repositório 
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: '0xF1656F24C74CD1D8'
+  tags: mariadb_repositório
+
+- name: Adicionando repositório
+  apt_repository:
+    repo: "deb [arch=amd64] http://nyc2.mirrors.digitalocean.com/mariadb/repo/{{ mariadb_version }}/ubuntu bionic main"
+    state: present
+    filename: mariadb
+  tags: mariadb_repositório
+
+- name: Instalando
+  apt:
+    name: '{{ item }}'
+  with_items:
+    - mariadb-server
+    - python3-mysqldb
+  tags: mariadb_install
+
+- name: Criando base de dados
+  mysql_db:
+    name: "{{ item.name }}"
+    state: present
+  with_items:
+    - "{{ mariadb_databases }}"
+  tags: mariadb_base
+
+- name: Criando usuário para o banco de dados
+  mysql_user:
+    name: "{{ item.name }}"
+    host: localhost
+    password: #"{{ item.password }}"
+    priv: #"{{ item.priv }}"
+    state: absent
+  with_items:
+    - "{{ mariadb_users }}"
+  tags: mariadb_user

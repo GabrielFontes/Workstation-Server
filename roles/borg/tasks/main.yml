@@ -1,0 +1,65 @@
+- name: Create backup dir scripts
+  file: 
+    mode: '0755'
+    path: /etc/borg
+    state: directory
+
+- name: Create file log
+  file:
+    path: /var/log/cron.log
+    state: touch
+    mode: "u+rw,g+rw" #permissão de leitura / escrita para o usuário e para o grupo
+
+- name: Install borg and create user
+  block:
+  - name: Borg Install
+    apt:
+      name: 'borgbackup'
+      install_recommends: yes
+      force: yes
+
+  - name: Create user borg
+    user:
+      name: '{{ item.user }}'
+    with_items: "{{ borg_user }}"
+    tags: create_user
+
+  - name: Create configure scripts
+    template: 
+      src: configure.sh
+      dest: /etc/borg/configure-{{ item.user }}.sh
+      mode: '0700'
+    with_items: "{{ borg_user }}"
+    tags: script_configure
+
+  - name: Borg config
+    shell: './configure-{{ item.user }}.sh'
+    args:
+      chdir: /etc/borg/
+    with_items: "{{ borg_user }}"
+  when: 'create_user is defined'
+
+- name: Create backup scripts
+  template:
+    src: backup.sh
+    dest: /etc/borg/backup-{{ item.user }}.sh
+    mode: '0700'
+  with_items: "{{ borg_user }}"
+  tags: script_backup
+  
+- name: Create cronjob for backup
+  cron:
+    name: 'borg backup {{ item.user }}'
+    job: '/etc/borg/backup-{{ item.user }}.sh'
+    day: '*'
+    hour: '*' 
+    minute: '*'
+    state: present
+    user: root
+  with_items: '{{ borg_user }}'
+  tags: cron
+
+#- name: Copy archives for host-server
+#  copy:
+#    backup: yes
+#    dest: /home/{{item.user}}/*

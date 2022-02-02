@@ -1,0 +1,111 @@
+- name: Instalação provisória
+  apt:
+    update_cache: yes
+    name: '{{ item }}'
+  with_items:
+    - php7.2-fpm
+    - php7.2-bcmath 
+    - php7.2-sqlite3 
+    - php7.2-gd 
+    - php7.2-xml
+    - php7.2-mbstring 
+    - php7.2-mysql 
+    - php7.2-ldap 
+
+- name: removendo php.ini
+  file:
+    path: /etc/php/7.2/fpm/php.ini
+    state: absent
+
+- name: copiando php.ini
+  copy:
+    src: 'php.ini'
+    dest: /etc/php/7.2/fpm
+
+
+#- name: Baixando código fonte
+#  get_url: 
+#    url: https://www.php.net/distributions/php-{{ php_version }}.tar.gz
+#    dest: /tmp/
+#  tags: php_instalação
+#
+#- name: Instalando dependências
+#  apt:
+#    update_cache: yes
+#    name: '{{ php_dependencias}}'
+#  tags: php_instalação
+#
+#- name: link libc
+#  file:
+#    src: /usr/lib/libc-client.a
+#    dest: /usr/lib/x86_64-linux-gnu/libc-client.a
+#    state: link
+#    owner: root
+#    group: root
+#  tags: php_instalação
+#
+#- name: Descompactando o código fonte
+#  unarchive:
+#    src: /tmp/php-{{ php_version }}.tar.gz
+#    remote_src: yes
+#    dest: /usr/local/src
+#  tags: php_instalação
+#
+#- name: Cria diretórios
+#  file:
+#    path: '{{ item }}'
+#    owner: root
+#    state: directory
+#  with_items:
+#    - /usr/local/php/php-{{php_short_version}}
+#    - /usr/local/php/php-{{php_short_version}}/pool.d
+#    - /var/log/php/{{ php_short_version }}
+#    - /run/php/{{ php_short_version }}
+#  tags: php_diretórios
+#
+#- name: Configurando
+#  command:
+#    cmd: ./configure --prefix=/usr/local/php/php-{{ php_short_version }} --with-fpm-systemd --enable-zip --with-config-file-path=/usr/local/php/php-{{ php_short_version }}/lib --with-zlib --enable-bcmath --enable-mbstring --with-gd --enable-calendar --with-curl --with-zlib --enable-inline-optimization --with-bz2 --with-zlib --enable-sockets --with-mysqli --with-png --with-openssl --with-fpm-user=www-data --with-fpm-group=www-data --enable-ftp  --with-jpeg --enable-fpm --enable-cli --with-zip 
+#    chdir: /usr/local/src/php-{{ php_version }}
+#  tags: php_compila
+#
+#- name: Make install
+#  shell: '{{ item }}' 
+#  args: 
+#    chdir: /usr/local/src/php-{{ php_version }}
+#  with_items:
+#    - make
+#    - make install
+#  tags: php_compila
+#
+#- name: Copiando arquivo de configuração php.ini
+#  copy:
+#    src: php.ini
+#    dest: /usr/local/php/php-{{ php_short_version }}/lib/php.ini
+#  tags: php_configura
+#
+#- name: Copiando arquivo de configuração do php-fpm 
+#  template:
+#    src: php-fpm.conf
+#    dest: /usr/local/php/php-{{ php_short_version }}/etc/php-fpm.conf
+#  tags: php_configura
+#
+#- name: Copiando pool padrão do PHP-FPM
+#  template:
+#    src: default.conf
+#    dest: /usr/local/php/php-{{php_short_version}}/pool.d
+#  tags: php_configura
+#
+#- name: Criando system unit 
+#  template:
+#    src: php-{{ php_short_version }}-fpm.service
+#    dest: /lib/systemd/system/php-{{ php_short_version }}-fpm.service
+#  tags: php_iniciação
+#
+#- name: Ativando system unit
+#  shell: 'systemctl enable php-{{ php_short_version }}-fpm.service && systemctl start php-{{ php_short_version }}-fpm.service'
+#  args:  
+#    chdir: /lib/systemd/system
+#  tags: php_iniciação
+#
+#

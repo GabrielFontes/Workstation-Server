@@ -1,0 +1,14 @@
+--- 
+- name: Criando diretório
+  file:
+    path: /var/www/html
+    state: directory
+  tags: wordpress
+
+- name: Extraindo arquivos do WordPress
+  unarchive:
+    src: https://br.wordpress.org/wordpress-{{ wordpress.version }}-pt_BR.tar.gz
+    dest: /var/www/html
+    extra_opts: [--strip-components=1]
+    remote_src: yes
+  tags: wordpress

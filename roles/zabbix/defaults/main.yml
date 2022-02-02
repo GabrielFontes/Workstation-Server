@@ -1,0 +1,12 @@
+zabbix_configure: '--prefix=/usr/local/sbin/zabbiz-release/debian/  --enable-server --enable-agent --with-mysql'
+zabbix_version: '5.0'
+zabbix_version_full: '5.0.2'
+zabbix_scripts:
+  - 'zabbix-server-mysql'
+  - 'zabbix-agent'
+zabbix_requisitos:
+  - 'gcc'
+  - 'libmysqld-dev'
+  - 'libevent-dev'
+  - 'libpcre3-dev'
+  - 'make'

@@ -1,0 +1,4 @@
+mariadb_version: '10.3'
+Pacotes:
+  - mariadb-server-10.1
+  - mariadb-client-10.1

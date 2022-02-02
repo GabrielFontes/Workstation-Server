@@ -1,0 +1,4 @@
+- name: Reinicia o nginx
+  service:
+    name: nginx
+    state: reloaded

@@ -1,0 +1,49 @@
+---
+- name: Adicionando repositório
+  apt_repository:
+    filename: 'nginx'
+    repo: "ppa:nginx/stable"
+    state: present
+    update_cache: yes
+  tags: nginx_install
+
+- name: Instalando
+  apt:
+    name: '{{ Pacotes }}'
+    update_cache: yes
+  tags: nginx_install
+
+- name: Configura diretórios
+  file:
+    path: "/home/{{ item.dominio }}"
+    state: directory
+  with_items:
+    - '{{ sites}} '
+  tags: nginx_configure_paths
+
+- name: Remove arquivo de configuração Padrão
+  file:
+    path: /etc/nginx/{{ item }}/default
+    state: absent
+  with_items:
+    - sites-enabled
+    - sites-available
+  tags: nginx_configure_paths
+
+- name: Copia arquivos de configuração
+  template:
+    src: 'default'
+    dest: /etc/nginx/sites-available/default
+  with_items:
+    - '{{ sites }}'
+  tags: nginx_configure_domain
+
+- name: Link Simbólico
+  notify: Reinicia o nginx
+  file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  with_items:
+    - '{{ sites }}'
+  tags: nginx_configure_domain

@@ -1,0 +1,3 @@
+wordpress:
+  version: 4.9.6
+  language: pt_BR 
